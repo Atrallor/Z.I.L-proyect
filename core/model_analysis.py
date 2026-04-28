@@ -25,13 +25,7 @@ def analyze_screen(img_bytes: bytes) -> tuple[str, str] | None:
         data = resp.json()
         text = data.get("message", {}).get("content", "").strip()
 
-        print(f"[Z.I.L] Respuesta raw: {repr(text[:100])}")
-
-        if text:
-            printable = sum(1 for c in text if c.isprintable())
-            if printable / len(text) < 0.75:
-                print("[Z.I.L] Respuesta corrupta descartada.")
-                return None
+        print(f"[Z.I.L] Respuesta: {repr(text)}")
 
         if "[SILENCIO]" in text or not text:
             return None
