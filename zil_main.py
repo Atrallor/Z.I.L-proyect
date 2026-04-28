@@ -13,7 +13,7 @@ if sys.stdout.encoding != 'utf-8':
         pass
 
 def main():
-    print("=" * 55 + "\nZ.I.L – Activado\n" + "=" * 55)
+    print("=" * 55 + "\nZ.I.L – Activada\n" + "=" * 55)
 
     launch_vtube_if_closed()
 
@@ -31,7 +31,6 @@ def main():
 
     zil.start()
 
-    time.sleep(1)
     set_vtube_always_on_top(1330, 400, 200, 400)
 
     print("Tip: Ctrl+C para salir.\n")
@@ -42,7 +41,6 @@ def main():
                 msg = zil.message_queue.get(timeout=1)
                 if isinstance(msg, tuple):
                     comment, emotion = msg
-                    print(f"[Z.I.L] {comment}")
                 else:
                     print(f"[Z.I.L] {msg}")
             except queue.Empty:

@@ -7,7 +7,7 @@ from core.config import CONFIG
 from core.screenshots import capture_screen
 from core.model_analysis import analyze_screen
 from core.voice import speak_text
-from core.avatar import VTubeStudioAPI
+from core.avatar import VTubeStudioAPI, start_body_tracking
 
 class ZIL:
     def __init__(self):
@@ -35,6 +35,7 @@ class ZIL:
         connected = self._run(self.avatar.connect())
         if connected:
             print("[VTS] Avatar conectado y activo.")
+            start_body_tracking(self.avatar, self._loop)
         else:
             print("[VTS] No se pudo conectar el avatar.")
 
@@ -49,7 +50,6 @@ class ZIL:
         print("[Z.I.L] Detenido.")
 
     def _analysis_loop(self):
-        time.sleep(3)
 
         while self.running:
             try:
@@ -69,8 +69,6 @@ class ZIL:
 
                 if analysis:
                     comment, emotion = analysis
-                    print(f"[Z.I.L] Comentario: {comment}")
-
                     self.message_queue.put((comment, emotion))
                     speak_text(comment, self.avatar, self._loop)
 

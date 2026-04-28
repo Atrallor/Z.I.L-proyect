@@ -7,6 +7,7 @@ import tempfile
 import threading
 from core.config import CONFIG
 from mutagen.mp3 import MP3
+from core.avatar import start_lip_sync
 
 SYNC_DELAY = 2.0
 
@@ -37,14 +38,13 @@ def speak_text(text: str, avatar_api=None, loop=None):
             if not os.path.exists(temp_file):
                 return
 
-            # Duración real del audio generado
             duration = get_mp3_duration(temp_file)
             print(f"[TTS] Duración real del audio: {duration:.2f}s")
 
             time.sleep(SYNC_DELAY)
 
             if avatar_api and loop:
-                avatar_api.start_lip_sync(text, duration, loop)
+                start_lip_sync(avatar_api, text, duration, loop)
 
             short_path = ctypes.create_unicode_buffer(260)
             ctypes.windll.kernel32.GetShortPathNameW(temp_file, short_path, 260)
