@@ -23,6 +23,25 @@ def launch_vtube_if_closed():
     else:
         print("[VTS] VTube Studio ya está corriendo.")
 
+def close_vtube_studio():
+    print("[VTS] Cerrando VTube Studio...")
+    closed = False
+    for proc in psutil.process_iter(['name']):
+        if 'VTube Studio' in proc.info['name']:
+            try:
+                proc.terminate()
+                proc.wait(timeout=3)
+                closed = True
+            except psutil.NoSuchProcess:
+                pass
+            except psutil.TimeoutExpired:
+                proc.kill()
+                closed = True
+    if closed:
+        print("[VTS] VTube Studio cerrado.")
+    else:
+        print("[VTS] VTube Studio no estaba abierto.")
+
 def set_vtube_always_on_top(x, y, width, height):
     hwnds = []
     def callback(hwnd, _):

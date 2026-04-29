@@ -4,7 +4,7 @@ import threading
 import queue
 import time
 from core.engine import ZIL
-from interface.avatarLoader import set_vtube_always_on_top, launch_vtube_if_closed
+from interface.avatarLoader import set_vtube_always_on_top, launch_vtube_if_closed, close_vtube_studio
 
 if sys.stdout.encoding != 'utf-8':
     try:
@@ -55,6 +55,7 @@ def main():
     except KeyboardInterrupt:
         print("\n[Z.I.L] Cerrando...")
         zil.stop()
+        close_vtube_studio()
 
 if __name__ == "__main__":
     main()
