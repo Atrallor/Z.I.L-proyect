@@ -14,7 +14,10 @@ async def body_tracking_loop(vts_api):
                 await asyncio.sleep(1)
                 continue
 
-            hwnd = win32gui.FindWindow(None, "VTube Studio")
+            hwnd = win32gui.FindWindow(None, "\u200b")
+            if not hwnd:
+                hwnd = win32gui.FindWindow(None, "VTube Studio")
+                
             if not hwnd:
                 await asyncio.sleep(1)
                 continue

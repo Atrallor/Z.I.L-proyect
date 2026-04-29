@@ -31,7 +31,7 @@ def main():
 
     zil.start()
 
-    set_vtube_always_on_top(1330, 400, 200, 400)
+    set_vtube_always_on_top(1650, 550, 250, 450)
 
     print("Tip: Ctrl+C para salir.\n")
 
