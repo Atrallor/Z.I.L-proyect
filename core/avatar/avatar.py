@@ -1,7 +1,6 @@
 import asyncio
 import websockets
 import json
-import time
 
 class VTubeStudioAPI:
     def __init__(self, host="localhost", port=8001):

@@ -1,12 +1,13 @@
-import time
 import asyncio
+import time
 
 PARAM_MOUTH_OPEN  = "ZIL_MouthOpen"
 PARAM_MOUTH_SMILE = "ZIL_MouthSmile"
 
-VOWELS = set('aáeéiíoóuúü')
 PUNCTUATION_SHORT = set(',;')
 PUNCTUATION_LONG  = set('.!?…')
+
+VOWELS = set('aáeéiíoóuúü')
 
 async def _lerp_to(vts_api, target_open, target_smile, current, steps=6, interval=0.03):
     cur_open, cur_smile = current

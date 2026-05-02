@@ -17,8 +17,8 @@ def launch_vtube_if_closed():
     if not is_vtube_running():
         print("[VTS] VTube Studio cerrado, abriendo...")
         subprocess.Popen(VTS_PATH)
-        print("[VTS] Esperando que cargue (35s)...")
-        time.sleep(35)
+        print("[VTS] Esperando que cargue (30s)...")
+        time.sleep(30)
         print("[VTS] Listo.")
     else:
         print("[VTS] VTube Studio ya está corriendo.")
