@@ -5,6 +5,7 @@ import queue
 import time
 from core.engine import ZIL
 from interface.avatarLoader import set_vtube_always_on_top, launch_vtube_if_closed, close_vtube_studio
+from interface.mic_button import launch_mic_button
 
 if sys.stdout.encoding != 'utf-8':
     try:
@@ -32,6 +33,9 @@ def main():
     zil.start()
 
     set_vtube_always_on_top(1650, 550, 250, 450)
+
+    # Botón flotante de micrófono anclado a la ventana de VTS
+    launch_mic_button(zil)
 
     print("Tip: Ctrl+C para salir.\n")
 

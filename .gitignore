@@ -1,3 +1,4 @@
 .env
 __pycache__
 steam_appid.txt
+zil_memory_db
