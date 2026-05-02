@@ -1,5 +1,6 @@
 import sys
 import os
+from pathlib import Path
 
 # Añadir el directorio actual al path para poder importar core
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -25,8 +26,7 @@ try:
                 print(f"  ZIL pregunto: {meta.get('zil_question', '')[:100]}...")
                 print(f"  Ale explico: {meta.get('ale_explanation', '')}")
                 if image_path and os.path.exists(image_path):
-                    abs_path = os.path.abspath(image_path)
-                    print(f"  Imagen: file:///{abs_path.replace(os.sep, '/')}")
+                    print(f"  Imagen: {Path(image_path).resolve().as_uri()}")
                 else:
                     print(f"  Imagen: Sin imagen")
                 print("-" * 40)
