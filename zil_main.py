@@ -32,7 +32,7 @@ def main():
 
     zil.start()
 
-    set_vtube_always_on_top(1650, 550, 250, 450)
+    set_vtube_always_on_top(500, 500, 250, 450)
 
     # Botón flotante de micrófono anclado a la ventana de VTS
     launch_mic_button(zil)
