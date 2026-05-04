@@ -3,13 +3,14 @@ import threading
 import queue
 import random
 import asyncio
-from core.config import CONFIG
+import os
 from core.screenshots import capture_screen
 from core.model_analysis import analyze_screen
 from core.voice import speak_text, interrupt_tts
 from core.avatar import VTubeStudioAPI, start_body_tracking
 from core.conversation import ConversationSession
 
+capture_interval = 20
 
 class ZIL:
     def __init__(self):
@@ -19,7 +20,7 @@ class ZIL:
         self._loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
         self._loop_thread: threading.Thread | None = None
         self.avatar = VTubeStudioAPI()
-        self.avatar.auth_token = CONFIG["vtube_token"]
+        self.avatar.auth_token = os.getenv("VTUBE_TOKEN")
 
         # Evento que pausa el loop de análisis durante el modo conversación
         self.conversation_mode = threading.Event()
@@ -54,7 +55,7 @@ class ZIL:
 
         self._worker_thread = threading.Thread(target=self._analysis_loop, daemon=True)
         self._worker_thread.start()
-        print(f"[Z.I.L] Iniciado. Analizando cada {CONFIG['capture_interval']}s...")
+        print(f"[Z.I.L] Iniciado. Analizando cada {capture_interval}s...")
 
     def stop(self):
         self.running = False
@@ -116,16 +117,16 @@ class ZIL:
                     time.sleep(0.5)
                     continue
 
-                if random.random() < CONFIG["silence_threshold"]:
+                if random.random() < 0.4:
                     print("[Z.I.L] Ronda silenciosa...")
-                    time.sleep(CONFIG["capture_interval"])
+                    time.sleep(capture_interval)
                     continue
 
                 print("[Z.I.L] Analizando pantalla...")
                 img_bytes = capture_screen()
 
                 if img_bytes is None:
-                    time.sleep(CONFIG["capture_interval"])
+                    time.sleep(capture_interval)
                     continue
 
                 # Recuperar memorias semánticas relevantes antes de analizar
@@ -157,4 +158,4 @@ class ZIL:
             except Exception as e:
                 print(f"[Z.I.L] Error en loop: {e}")
 
-            time.sleep(CONFIG["capture_interval"])
+            time.sleep(capture_interval)

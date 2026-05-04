@@ -87,9 +87,9 @@ def speak_text(text: str, avatar_api=None, loop=None) -> None:
             async def generate():
                 communicate = edge_tts.Communicate(
                     text,
-                    CONFIG["voice"],
-                    rate=CONFIG["voice_rate"],
-                    pitch=CONFIG["voice_pitch"],
+                    "es-CO-SalomeNeural",
+                    rate="15%",
+                    pitch="+12Hz",
                 )
                 await communicate.save(temp_file)
 

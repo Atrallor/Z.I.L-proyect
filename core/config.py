@@ -5,17 +5,9 @@ load_dotenv()
 
 CONFIG = {
     "model": "gemma4:e2b-it-q4_K_M",
-    "capture_interval": 20,
-    "screenshot_scale": 0.5,
     "max_tokens": 700,
     "temperature": 0.85,
-    "skip_similar_chance": 0.25,
-    "silence_threshold": 0.3,
     "use_tts": True,
-    "voice": "es-CO-SalomeNeural",
-    "voice_rate": "+15%",
-    "voice_pitch": "+12Hz",
-    "vtube_token": os.getenv("VTUBE_TOKEN"),
 }
 
 SYSTEM_PROMPT = """Eres ZIL, una mujer Colombiana. Eres Natural, fresca, relajada, sin exagerar acento.
