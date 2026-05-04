@@ -3,6 +3,7 @@ import win32con
 import subprocess
 import time
 import psutil
+import ctypes
 
 VTS_PATH = r"C:\Program Files (x86)\Steam\steamapps\common\VTube Studio\VTube Studio.exe"
 
@@ -56,6 +57,32 @@ def set_vtube_always_on_top(x, y, width, height):
         style &= ~win32con.WS_SYSMENU
         win32gui.SetWindowLong(hwnd, win32con.GWL_STYLE, style)
         win32gui.SetWindowText(hwnd, "\u200b")
+
+        # Configurar la barra superior en modo oscuro / gris oscuro
+        try:
+            DWMWA_USE_IMMERSIVE_DARK_MODE = 20
+            set_dark_mode = ctypes.c_int(1)
+            ctypes.windll.dwmapi.DwmSetWindowAttribute(
+                hwnd, 
+                DWMWA_USE_IMMERSIVE_DARK_MODE, 
+                ctypes.byref(set_dark_mode), 
+                ctypes.sizeof(set_dark_mode)
+            )
+        except Exception:
+            pass
+
+        try:
+            DWMWA_CAPTION_COLOR = 35
+            # Gris oscuro (formato COLORREF: 0x00bbggrr) -> RGB(40,40,40)
+            dark_gray = ctypes.c_int(0x00282828)
+            ctypes.windll.dwmapi.DwmSetWindowAttribute(
+                hwnd,
+                DWMWA_CAPTION_COLOR,
+                ctypes.byref(dark_gray),
+                ctypes.sizeof(dark_gray)
+            )
+        except Exception:
+            pass
         win32gui.SetWindowPos(
             hwnd, win32con.HWND_TOPMOST,
             x, y, width, height,

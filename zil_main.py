@@ -3,9 +3,12 @@ import asyncio
 import threading
 import queue
 import time
+from dotenv import load_dotenv
 from core.engine import ZIL
 from interface.avatarLoader import set_vtube_always_on_top, launch_vtube_if_closed, close_vtube_studio
 from interface.mic_button import launch_mic_button
+
+load_dotenv()
 
 if sys.stdout.encoding != 'utf-8':
     try:
@@ -17,7 +20,6 @@ def main():
     print("=" * 55 + "\nZ.I.L – Activada\n" + "=" * 55)
 
     launch_vtube_if_closed()
-
     zil = ZIL()
 
     async def setup_vts():
@@ -33,8 +35,6 @@ def main():
     zil.start()
 
     set_vtube_always_on_top(500, 500, 250, 450)
-
-    # Botón flotante de micrófono anclado a la ventana de VTS
     launch_mic_button(zil)
 
     print("Tip: Ctrl+C para salir.\n")

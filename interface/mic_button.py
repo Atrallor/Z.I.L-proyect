@@ -33,33 +33,28 @@ class MicButton:
         self._stop_listen = threading.Event()
         self._listen_thread: threading.Thread | None = None
         self._pulse_phase = 0.0
-        self._last_geo: str = ""   # cache para evitar llamadas redundantes a geometry()
+        self._last_geo: str = ""
 
-        # ── Ventana Tkinter ──────────────────────────────────────────────────
         self.root = tk.Tk()
-        self.root.overrideredirect(True)                    # sin bordes ni barra de título
-        self.root.wm_attributes("-topmost", True)           # siempre encima
-        self.root.wm_attributes("-alpha", 0.92)             # ligera transparencia
-        self.root.configure(bg="#111111")
-        self.root.geometry(f"{BTN_SIZE}x{BTN_SIZE}+0+0")   # posición inicial cualquiera
+        self.root.overrideredirect(True)                   
+        self.root.wm_attributes("-topmost", True)           
+        self.root.wm_attributes("-transparentcolor", "#000001")
+        self.root.configure(bg="#000001")
+        self.root.geometry(f"{BTN_SIZE}x{BTN_SIZE}+0+0")   
 
-        # ── Canvas (dibujo del botón) ────────────────────────────────────────
         self.canvas = tk.Canvas(
             self.root,
             width=BTN_SIZE,
             height=BTN_SIZE,
-            bg="#111111",
+            bg="#000001",
             highlightthickness=0,
             cursor="hand2",
         )
         self.canvas.pack()
         self.canvas.bind("<Button-1>", self._on_click)
 
-        # ── Arrancar loops ───────────────────────────────────────────────────
         self._track_window()
         self._animate()
-
-    # ── Seguimiento de ventana ───────────────────────────────────────────────
 
     def _find_vts_hwnd(self):
         """Busca el hwnd de VTube Studio igual que body_tracking.py."""
@@ -76,26 +71,21 @@ class MicButton:
         hwnd = self._find_vts_hwnd()
         if hwnd:
             left, top, right, bottom = win32gui.GetWindowRect(hwnd)
-            # Botón a la IZQUIERDA del borde izquierdo, alineado con el borde inferior
             x = left - BTN_SIZE - GAP_X
             y = bottom - BTN_SIZE
-            new_geo = f"{BTN_SIZE}x{BTN_SIZE}+{x}+{y}"
-            if new_geo != self._last_geo:        # sólo actualizar si cambió
+            new_geo = f"{BTN_SIZE}x{BTN_SIZE}+{x}+{y-10}"
+            if new_geo != self._last_geo:
                 self._last_geo = new_geo
                 self.root.geometry(new_geo)
         self.root.after(TRACK_INTERVAL, self._track_window)
 
-    # ── Animación del botón ──────────────────────────────────────────────────
-
     def _animate(self):
-        """Redibuja el botón en cada frame; aplica pulso rojo cuando está activo."""
         self.canvas.delete("all")
 
         if self.active:
             self._pulse_phase = (self._pulse_phase + 0.18) % (2 * math.pi)
             pulse = 0.65 + 0.35 * math.sin(self._pulse_phase)
 
-            # Color rojo pulsante
             r = int(180 + 75 * pulse)
             r = min(255, r)
             main_color = f"#{r:02x}1515"
@@ -107,18 +97,15 @@ class MicButton:
             icon_color = "#cccccc"
 
         pad = 4
-        # Anillo exterior (brillo/sombra)
         self.canvas.create_oval(
             pad, pad, BTN_SIZE - pad, BTN_SIZE - pad,
             fill=ring_color, outline="", width=0,
         )
-        # Círculo principal
         inner = pad + 3
         self.canvas.create_oval(
             inner, inner, BTN_SIZE - inner, BTN_SIZE - inner,
             fill=main_color, outline="", width=0,
         )
-        # Ícono micrófono
         self.canvas.create_text(
             BTN_SIZE // 2, BTN_SIZE // 2,
             text="🎤",
@@ -157,7 +144,6 @@ class MicButton:
     def _on_voice_input(self, text: str):
         self.engine.handle_voice_input(text)
 
-    # ── Arranque ─────────────────────────────────────────────────────────────
 
     def run(self):
         """Bloquea hasta que se cierre la ventana (llamar desde un thread separado)."""

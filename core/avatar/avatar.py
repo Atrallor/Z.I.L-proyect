@@ -70,12 +70,8 @@ class VTubeStudioAPI:
         for p in params:
             resp = await self._send_raw("ParameterCreationRequest", p, "CreateParam")
             err = resp.get("data", {}).get("errorID", 0)
-            if err == 0:
-                print(f"[VTS] Parámetro '{p['parameterName']}' creado.")
-            elif err == 159:
-                print(f"[VTS] Parámetro '{p['parameterName']}' ya existía.")
-            else:
-                print(f"[VTS] Error creando '{p['parameterName']}': {resp}")
+            if err == 0: continue
+            else: print(f"[VTS] Error creando '{p['parameterName']}': {resp}")
 
     async def set_parameters(self, params_dict):
         parameter_values = [{"id": k, "value": v} for k, v in params_dict.items()]
