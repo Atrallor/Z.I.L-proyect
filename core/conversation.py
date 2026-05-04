@@ -70,7 +70,7 @@ def _extract_learned_fact(history: list[dict]) -> str | None:
             "model": CONFIG["model"],
             "messages": [{"role": "user", "content": prompt}],
             "stream": False,
-            "options": {"temperature": 0.1, "num_predict": 100},
+            "options": {"temperature": CONFIG["temperature"], "num_predict": CONFIG.get("max_tokens", 700)},
         }
         resp = _client.post("http://localhost:11434/api/chat", json=payload)
         resp.raise_for_status()
@@ -121,7 +121,7 @@ class ConversationSession:
                 "model": CONFIG["model"],
                 "messages": messages,
                 "stream": False,
-                "options": {"temperature": CONFIG["temperature"], "num_predict": 150},
+                "options": {"temperature": CONFIG["temperature"], "num_predict": CONFIG.get("max_tokens", 700)},
             }
             resp = _client.post("http://localhost:11434/api/chat", json=payload)
             resp.raise_for_status()
