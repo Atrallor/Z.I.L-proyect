@@ -8,14 +8,7 @@ def capture_screen() -> bytes | None:
         with mss.MSS() as sct:
             monitor = sct.monitors[0]
             screenshot = sct.grab(monitor)
-
-        img = Image.frombytes(
-            "RGB",
-            (screenshot.width, screenshot.height),
-            screenshot.bgra,
-            "raw",
-            "BGRX"
-        )
+        img = Image.frombytes("RGB",(screenshot.width, screenshot.height),screenshot.bgra,"raw","BGRX")
 
         print(f"[Z.I.L] Screenshot capturado")
         buffer = io.BytesIO()

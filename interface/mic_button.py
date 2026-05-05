@@ -2,30 +2,15 @@ import math
 import threading
 import tkinter as tk
 import win32gui
-
 from core.micro_to_text import start_listening_loop
 
-# ── Tamaño y offset del botón respecto a la esquina inferior-izquierda de VTS ──
 BTN_SIZE = 50
-# El botón queda a la IZQUIERDA de la ventana, alineado con su borde inferior
-GAP_X    = 4    # px de separación entre el borde izquierdo de VTS y el botón
-
-# Frecuencia del loop de seguimiento (ms) — 16 ms ≈ 60 fps, movimiento imperceptible
+GAP_X    = 4
 TRACK_INTERVAL = 16
-# Frecuencia del loop de animación (ms)
 ANIM_INTERVAL  = 50
 
 
 class MicButton:
-    """
-    Ventana Tkinter flotante sin bordes que se ancla a la esquina
-    inferior-izquierda de la ventana de VTube Studio y la sigue si se mueve.
-
-    Al hacer clic activa/desactiva el modo conversación del engine:
-      - Pausa el loop de análisis de pantalla (engine.enter_conversation)
-      - Inicia un thread de escucha continua con Whisper
-      - Cada fragmento de voz se envía a engine.handle_voice_input(text)
-    """
 
     def __init__(self, engine):
         self.engine = engine
@@ -57,17 +42,11 @@ class MicButton:
         self._animate()
 
     def _find_vts_hwnd(self):
-        """Busca el hwnd de VTube Studio igual que body_tracking.py."""
-        hwnd = win32gui.FindWindow(None, "\u200b")   # título invisible que le asigna avatarLoader
-        if not hwnd:
-            hwnd = win32gui.FindWindow(None, "VTube Studio")
+        hwnd = win32gui.FindWindow(None, "\u200b")   
+        if not hwnd: hwnd = win32gui.FindWindow(None, "VTube Studio")
         return hwnd if hwnd else None
 
     def _track_window(self):
-        """Reposiciona el botón pegado a la esquina inferior-izquierda de VTS.
-        Se corre cada 16 ms para que el movimiento se vea como si el botón
-        fuera parte de la ventana.
-        """
         hwnd = self._find_vts_hwnd()
         if hwnd:
             left, top, right, bottom = win32gui.GetWindowRect(hwnd)
@@ -115,13 +94,9 @@ class MicButton:
 
         self.root.after(ANIM_INTERVAL, self._animate)
 
-    # ── Interacción ──────────────────────────────────────────────────────────
-
     def _on_click(self, _event):
-        if not self.active:
-            self._activate()
-        else:
-            self._deactivate()
+        if not self.active: self._activate()
+        else: self._deactivate()
 
     def _activate(self):
         self.active = True
@@ -145,22 +120,12 @@ class MicButton:
         self.engine.handle_voice_input(text)
 
 
-    def run(self):
-        """Bloquea hasta que se cierre la ventana (llamar desde un thread separado)."""
-        self.root.mainloop()
-
-
-# ── Función de lanzamiento ───────────────────────────────────────────────────
+    def run(self): self.root.mainloop()
 
 def launch_mic_button(engine) -> threading.Thread:
-    """
-    Lanza el botón flotante en un thread daemon separado.
-    Retorna el thread por si se necesita hacer join.
-    """
     def _run():
         btn = MicButton(engine)
         btn.run()
-
     t = threading.Thread(target=_run, daemon=True, name="MicButtonThread")
     t.start()
     return t

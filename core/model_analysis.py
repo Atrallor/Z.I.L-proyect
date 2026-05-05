@@ -2,30 +2,17 @@ import base64
 import httpx
 from core.config import CONFIG, SYSTEM_PROMPT, USER_PROMPT
 
-# Cliente persistente para evitar latencia de conexión
 _client = httpx.Client(timeout=120.0)
 
-def analyze_screen(img_bytes: bytes, memory_context: str = "",
-                   memory_images: list[bytes] | None = None) -> tuple[str, str] | None:
-    """
-    Analiza una captura de pantalla y devuelve (comentario, emocion).
-    Si hay imágenes de memoria relevantes, se envían como referencia visual.
-    """
+def analyze_screen(img_bytes: bytes, memory_context: str = "", memory_images: list[bytes] | None = None) -> tuple[str, str] | None:
     img_b64 = base64.b64encode(img_bytes).decode("utf-8")
-
-    # Inyectar memorias relevantes al system prompt si las hay
     effective_system = SYSTEM_PROMPT
-    if memory_context:
-        effective_system = SYSTEM_PROMPT + "\n\n" + memory_context
-
-    # Construir lista de imágenes: screenshot actual + imagen de memoria (si hay)
+    if memory_context: effective_system = SYSTEM_PROMPT + "\n\n" + memory_context
     images = [img_b64]
     effective_user_prompt = USER_PROMPT
 
     if memory_images:
-        for mem_img in memory_images:
-            images.append(base64.b64encode(mem_img).decode("utf-8"))
-        # Indicarle a ZIL que la segunda imagen es de una sesión anterior
+        for mem_img in memory_images:images.append(base64.b64encode(mem_img).decode("utf-8"))
         effective_user_prompt = (
             USER_PROMPT + "\n\n"
             "NOTA: La primera imagen es lo que ves AHORA. "
@@ -64,12 +51,9 @@ def analyze_screen(img_bytes: bytes, memory_context: str = "",
             try:
                 emotion    = text[text.find("[") + 1 : text.find("]")]
                 clean_text = text[text.find("]")+1:].strip()
-            except Exception:
-                pass
+            except Exception: pass
 
-        if len(clean_text) < 8:
-            return None
-
+        if len(clean_text) < 8: return None
         return clean_text, emotion
 
     except Exception as e:

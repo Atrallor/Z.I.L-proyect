@@ -2,7 +2,6 @@ import sys
 import os
 from pathlib import Path
 
-# Añadir el directorio actual al path para poder importar core
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 try:
@@ -25,10 +24,8 @@ try:
                 print(f"  Visual: {meta.get('screen_description', '')[:100]}...")
                 print(f"  ZIL pregunto: {meta.get('zil_question', '')[:100]}...")
                 print(f"  Ale explico: {meta.get('ale_explanation', '')}")
-                if image_path and os.path.exists(image_path):
-                    print(f"  Imagen: {Path(image_path).resolve().as_uri()}")
-                else:
-                    print(f"  Imagen: Sin imagen")
+                if image_path and os.path.exists(image_path): print(f"  Imagen: {Path(image_path).resolve().as_uri()}")
+                else: print(f"  Imagen: Sin imagen")
                 print("-" * 40)
         else:
             print("\nLa base de datos está vacía. Z.I.L aún no ha 'aprendido' nada.")
@@ -36,8 +33,6 @@ try:
             
         print("\n" + "=" * 60)
 
-    if __name__ == "__main__":
-        view_memory()
+    if __name__ == "__main__": view_memory()
 
-except Exception as e:
-    print(f"Error al acceder a la memoria: {e}")
+except Exception as e: print(f"Error al acceder a la memoria: {e}")

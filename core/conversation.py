@@ -1,10 +1,3 @@
-"""
-core/conversation.py — Conversación directa con ZIL por voz.
-
-Mantiene el historial completo del hilo y realiza búsquedas semánticas
-en cada turno para que ZIL siempre pueda recordar lo que Ale le ha enseñado.
-"""
-
 import httpx
 from core.config import CONFIG
 from core.voice import speak_text
@@ -31,7 +24,6 @@ EMOCIONES: FELIZ, ENOJADA, SORPRENDIDA, TRISTE, PENSATIVA, GRACIOSA
 ---
 
 REGLAS:
-- Máx 2 oraciones cortas y naturales.
 - Coloquial, colombiana, directa.
 - Si Ale te explica algo nuevo, acéptalo y agradécele o comenta algo al respecto.
 - NO suenes como asistente virtual.
@@ -95,19 +87,14 @@ class ConversationSession:
 
     def reply(self, user_text: str, avatar=None, loop=None) -> None:
         if not user_text: return
-
-        # ── BÚSQUEDA DINÁMICA EN MEMORIA ──
-        # Buscamos memorias relevantes para lo que Ale acaba de decir
         current_memories = ""
         try:
             from core.memory import recall
-            # Buscamos tanto por el comentario de pantalla como por lo que dice Ale
             search_query = f"{self.screen_comment} {user_text}"
-            current_memories, _ = recall(search_query)  # solo texto, sin imágenes
+            current_memories, _ = recall(search_query)
         except Exception as e:
             print(f"[CONV] Error en recall: {e}")
 
-        # Construir el prompt del sistema con las memorias inyectadas
         full_system_prompt = CONVERSATION_SYSTEM_PROMPT
         if current_memories:
             full_system_prompt += f"\n\nRECUERDOS RELEVANTES:\n{current_memories}"
@@ -143,8 +130,7 @@ class ConversationSession:
             print(f"[ZIL Conv] Error: {e}")
 
     def close(self) -> None:
-        if len(self.history) <= 1: return # Solo el seed de pantalla
-
+        if len(self.history) <= 1: return
         print("[CONV] Analizando qué aprendí en esta charla...")
         learned_fact = _extract_learned_fact(self.history)
 

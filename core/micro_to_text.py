@@ -6,9 +6,9 @@ import time as _time
 
 SAMPLE_RATE = 16000
 SILENCE_THRESHOLD = 0.008  
-SILENCE_DURATION  = 2     
-MAX_DURATION      = 25.0    
-CHUNK_DURATION    = 0.1     
+SILENCE_DURATION = 2     
+MAX_DURATION = 25.0    
+CHUNK_DURATION = 0.1     
 
 _model: whisper.Whisper | None = None
 _model_lock = threading.Lock()
@@ -33,11 +33,11 @@ def listen_once() -> str | None:
 
     print("[MIC] Escuchando...")
     chunks: list[np.ndarray] = []
-    silence_count   = 0
+    silence_count = 0
     speech_detected = False
-    max_chunks     = int(MAX_DURATION   / CHUNK_DURATION)
-    silence_limit  = int(SILENCE_DURATION / CHUNK_DURATION)
-    chunk_frames   = int(SAMPLE_RATE * CHUNK_DURATION)
+    max_chunks = int(MAX_DURATION / CHUNK_DURATION)
+    silence_limit = int(SILENCE_DURATION / CHUNK_DURATION)
+    chunk_frames = int(SAMPLE_RATE * CHUNK_DURATION)
 
     try:
         with sd.InputStream(samplerate=SAMPLE_RATE, channels=1, dtype="float32") as stream:
@@ -46,7 +46,7 @@ def listen_once() -> str | None:
                 if tts_playing.is_set():
                     chunks.clear()
                     speech_detected = False
-                    silence_count   = 0
+                    silence_count = 0
                     continue
 
                 amplitude = float(np.abs(chunk).mean())
@@ -58,15 +58,11 @@ def listen_once() -> str | None:
                 elif speech_detected:
                     silence_count += 1
                     chunks.append(chunk.copy())
-                if silence_count >= silence_limit:
-                    break
+                if silence_count >= silence_limit: break
                 
-    except Exception as e:
-        print(f"[MIC] Error de audio: {e}")
-        return None
+    except Exception as e: print(f"[MIC] Error de audio: {e}"); return None
 
-    if not speech_detected or not chunks:
-        return None
+    if not speech_detected or not chunks: return None
 
     audio = np.concatenate(chunks, axis=0).squeeze().astype(np.float32)
     print("[MIC] Transcribiendo...")
@@ -88,5 +84,4 @@ def listen_once() -> str | None:
 def start_listening_loop(callback, stop_event: threading.Event) -> None:
     while not stop_event.is_set():
         text = listen_once()
-        if text and not stop_event.is_set():
-            callback(text)
+        if text and not stop_event.is_set(): callback(text)
