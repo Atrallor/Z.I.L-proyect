@@ -21,10 +21,10 @@ pip install python-dotenv websockets httpx chromadb Pillow sentence-transformers
 
 Crea un archivo llamado `.env` en la raíz del proyecto (donde está este README) con la siguiente estructura:
 
-
+```env
 VTUBE_TOKEN=******
 HF_TOKEN=******
-
+```
 
 ---
 
@@ -33,7 +33,7 @@ HF_TOKEN=******
 Para obtener el token necesario para que Z.I.L controle tu avatar:
 
 1.  Abre **VTube Studio**.
-2.  Ve a **Configuración** -> **Plugins** (el icono de la pieza de rompecabezas).
+2.  Ve a **Configuración** -> **Plugins**(el puerto default del api es 8001)
 3.  Asegúrate de que la opción **"API de VTube Studio"** esté activada.
 4.  Ejecuta el script de conexión:
     ```bash
