@@ -79,3 +79,44 @@ class VTubeStudioAPI:
             "InjectParameterDataRequest",
             {"faceFound": True, "mode": "set", "parameterValues": parameter_values},
         )
+
+if __name__ == "__main__":
+    async def get_token():
+        vts = VTubeStudioAPI()
+        print("\n" + "="*50)
+        print("1. Abre VTube Studio.")
+        print("2. Ve a Configuración.")
+        print("3. Asegúrate de que 'API de VTube Studio' esté ACTIVADO, puerto default 8001")
+        print("4. Al ejecutar este script, aparecerá un popup en VTube Studio.")
+        print("5. Dale a 'Allow' (Permitir).")
+        print("="*50 + "\n")
+
+        try:
+            ws = await websockets.connect(vts.uri)
+            # Enviar solicitud de token
+            req_token = {
+                "apiName": "VTubeStudioPublicAPI",
+                "apiVersion": "1.0",
+                "requestID": "TokenRequest",
+                "messageType": "AuthenticationTokenRequest",
+                "data": {
+                    "pluginName": vts.plugin_name,
+                    "pluginDeveloper": vts.developer
+                }
+            }
+            await ws.send(json.dumps(req_token))
+            response = json.loads(await ws.recv())
+            token = response.get("data", {}).get("authenticationToken")
+
+            if token:
+                print(f"\n¡ÉXITO! Tu VTUBE_TOKEN es:\n\n{token}\n")
+                print("Cópialo y pégalo en tu archivo .env")
+            else:
+                print("\nNo se recibió token. ¿Aceptaste el popup en VTube Studio?")
+
+            await ws.close()
+        except Exception as e:
+            print(f"\nError conectando a VTube Studio: {e}")
+            print("Asegúrate de que VTube Studio esté abierto y la API activada.")
+
+    asyncio.run(get_token())
