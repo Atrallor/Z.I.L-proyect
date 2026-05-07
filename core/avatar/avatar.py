@@ -86,14 +86,13 @@ if __name__ == "__main__":
         print("\n" + "="*50)
         print("1. Abre VTube Studio.")
         print("2. Ve a Configuración.")
-        print("3. Asegúrate de que 'API de VTube Studio' esté ACTIVADO, puerto default 8001")
+        print("3. Asegúrate de que 'API de VTube Studio' esté ACTIVADO, puerto default: 8001")
         print("4. Al ejecutar este script, aparecerá un popup en VTube Studio.")
         print("5. Dale a 'Allow' (Permitir).")
         print("="*50 + "\n")
 
         try:
             ws = await websockets.connect(vts.uri)
-            # Enviar solicitud de token
             req_token = {
                 "apiName": "VTubeStudioPublicAPI",
                 "apiVersion": "1.0",
